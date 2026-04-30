@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AI PM's Evaluation Cheat Sheet</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Kanit:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #F7F5F0; --surface: #FFFFFF; --surface-alt: #F0EDE6;
+      --lavender: #E6DEFA; --violet: #1B0442; --indigo: #5818FF;
+      --indigo-soft: #5818FF15; --indigo-mid: #5818FF44;
+      --green: #0D7A5F; --green-soft: #0D7A5F15;
+      --amber: #B45309; --amber-soft: #B4530915;
+      --red: #C0392B; --red-soft: #C0392B12;
+      --text-primary: #1B0442; --text-secondary: #4A3B6B; --text-muted: #9180B8;
+      --font-head: 'Kanit', sans-serif; --font-body: 'Inter', sans-serif;
+    }
+    body { background: var(--bg); color: var(--text-primary); font-family: var(--font-body); font-size: 13px; line-height: 1.5; }
+    .header { background: linear-gradient(180deg,#E6DEFA55 0%,var(--bg) 100%); border-bottom: 2px solid var(--lavender); padding: 32px 40px 0; }
+    .header-inner { max-width: 1100px; margin: 0 auto; }
+    .header-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+    .badge { display: inline-block; background: var(--indigo-soft); border: 1px solid var(--indigo-mid); border-radius: 4px; padding: 3px 10px; font-family: var(--font-head); font-size: 10px; color: var(--indigo); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 12px; }
+    .header h1 { font-family: var(--font-head); font-size: 28px; font-weight: 700; letter-spacing: -.02em; line-height: 1.2; color: var(--violet); }
+    .header-sub { color: var(--text-secondary); font-size: 13px; margin-top: 8px; }
+    .tabs { display: flex; margin-top: 24px; overflow-x: auto; }
+    .tab-btn { background: none; border: none; border-bottom: 2px solid transparent; color: var(--text-muted); padding: 10px 20px; font-family: var(--font-head); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; white-space: nowrap; transition: all .15s; }
+    .tab-btn:hover { color: var(--text-secondary); }
+    .tab-btn.active { color: var(--violet); border-bottom-color: var(--indigo); }
+    .content { max-width: 1100px; margin: 0 auto; padding: 32px 40px; }
+    .panel { display: none; }
+    .panel.active { display: block; }
+    .section-label { font-family: var(--font-head); font-size: 11px; color: var(--text-muted); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 16px; }
+    .intro-text { color: var(--text-secondary); margin-bottom: 24px; }
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(240px,1fr)); gap: 16px; }
+    .card-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+    @media(max-width:700px){ .card-grid-2 { grid-template-columns: 1fr; } }
+    .steps { display: flex; flex-direction: column; gap: 12px; }
+    .step { background: var(--surface); border: 1px solid var(--lavender); border-radius: 8px; overflow: hidden; transition: border-color .2s; }
+    .step.open { border-color: #5818FF55; background: #F9F7FE; }
+    .step-header { width: 100%; background: none; border: none; padding: 16px 20px; display: flex; align-items: center; gap: 16px; cursor: pointer; text-align: left; font-family: var(--font-body); }
+    .step-num { font-family: var(--font-head); font-size: 11px; font-weight: 700; letter-spacing: .1em; border-radius: 4px; padding: 2px 8px; background: var(--surface-alt); color: var(--text-muted); min-width: 32px; text-align: center; transition: all .2s; }
+    .step.open .step-num { background: var(--indigo); color: #fff; }
+    .step-title { font-size: 14px; font-weight: 600; color: var(--violet); }
+    .step-desc { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+    .step-toggle { color: var(--text-muted); font-size: 18px; margin-left: auto; line-height: 1; }
+    .step-body { display: none; padding: 0 20px 20px; }
+    .step.open .step-body { display: block; }
+    .choices { display: grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap: 10px; margin-bottom: 14px; }
+    .choice { background: var(--bg); border-radius: 6px; padding: 12px 14px; border-width: 1px 1px 1px 3px; border-style: solid; }
+    .choice-label { font-size: 12px; font-weight: 700; margin-bottom: 6px; font-family: var(--font-head); }
+    .choice-desc { font-size: 11px; color: var(--text-secondary); line-height: 1.5; }
+    .tip { background: var(--indigo-soft); border: 1px solid var(--indigo-mid); border-radius: 6px; padding: 10px 14px; display: flex; gap: 10px; }
+    .tip-arrow { color: var(--indigo); font-size: 14px; }
+    .tip-text { color: var(--text-secondary); font-size: 12px; line-height: 1.5; }
+    .cap-card { background: var(--surface); border: 1px solid var(--lavender); border-radius: 8px; padding: 20px; border-top-width: 3px; border-top-style: solid; }
+    .cap-name { font-family: var(--font-head); font-size: 13px; font-weight: 700; margin-bottom: 12px; }
+    .tag { display: inline-block; background: var(--surface-alt); border: 1px solid var(--lavender); border-radius: 4px; padding: 3px 8px; font-size: 11px; color: var(--text-secondary); margin-right: 6px; margin-bottom: 6px; }
+    .cap-meta { border-top: 1px solid var(--lavender); padding-top: 12px; margin-top: 8px; display: flex; flex-direction: column; gap: 8px; }
+    .meta-label { font-family: var(--font-head); font-size: 10px; color: var(--text-muted); letter-spacing: .08em; margin-bottom: 3px; }
+    .meta-val { font-size: 12px; color: var(--text-secondary); }
+    .use-when { border-radius: 4px; padding: 6px 10px; font-size: 11px; margin-top: 4px; border: 1px solid; }
+    .dnd-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+    @media(max-width:600px){ .dnd-grid { grid-template-columns: 1fr; } }
+    .dnd-row { display: contents; }
+    .dnd-do, .dnd-dont { border-radius: 6px; padding: 10px 14px; display: flex; gap: 10px; align-items: flex-start; font-size: 12px; line-height: 1.5; border: 1px solid; color: var(--text-secondary); }
+    .dnd-do { background: var(--green-soft); border-color: #0D7A5F33; }
+    .dnd-dont { background: var(--red-soft); border-color: #C0392B33; }
+    .dnd-icon { font-weight: 700; font-size: 13px; }
+    .deploy-card { background: var(--surface); border: 1px solid var(--lavender); border-radius: 8px; overflow: hidden; }
+    .deploy-hd { padding: 14px 18px; border-bottom: 1px solid; }
+    .deploy-name { font-family: var(--font-head); font-size: 13px; font-weight: 700; }
+    .deploy-goal { font-size: 12px; color: var(--text-secondary); margin-top: 4px; line-height: 1.4; }
+    .deploy-body { padding: 14px 18px; display: flex; flex-direction: column; gap: 12px; }
+    .pill { display: inline-block; background: var(--surface-alt); border: 1px solid var(--lavender); border-radius: 3px; padding: 2px 7px; font-size: 11px; color: var(--text-secondary); margin-right: 5px; margin-bottom: 5px; }
+    .eval-card { background: var(--surface); border: 1px solid var(--lavender); border-left-width: 3px; border-left-style: solid; border-radius: 6px; padding: 14px 16px; margin-bottom: 10px; }
+    .eval-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .eval-name { font-family: var(--font-head); font-size: 13px; font-weight: 700; }
+    .default-badge { border-radius: 3px; padding: 1px 7px; font-family: var(--font-head); font-size: 10px; border: 1px solid; }
+    .eval-row { font-size: 11px; color: var(--text-secondary); margin-bottom: 5px; line-height: 1.5; }
+    .prompt-box { background: var(--surface); border: 1px solid var(--lavender); border-radius: 8px; overflow: hidden; margin-bottom: 16px; }
+    .prompt-hd { background: var(--surface-alt); border-bottom: 1px solid var(--lavender); padding: 8px 16px; font-family: var(--font-head); font-size: 11px; color: var(--text-muted); letter-spacing: .08em; }
+    .prompt-body { padding: 16px; font-family: var(--font-body); font-size: 11px; color: var(--text-secondary); line-height: 1.7; white-space: pre-wrap; }
+    .rule-item { border-radius: 6px; padding: 10px 14px; display: flex; gap: 10px; align-items: flex-start; border-left-width: 3px; border-left-style: solid; border-top: 1px solid; border-right: 1px solid; border-bottom: 1px solid; background: var(--surface); margin-bottom: 8px; }
+    .rule-icon { font-weight: 700; font-size: 13px; }
+    .rule-text { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+    .bar-row { margin-bottom: 14px; }
+    .bar-label { display: flex; justify-content: space-between; margin-bottom: 6px; }
+    .bar-name { font-size: 12px; color: var(--text-secondary); }
+    .bar-pct { font-size: 12px; font-weight: 700; font-family: var(--font-head); }
+    .bar-track { background: var(--surface-alt); border-radius: 3px; height: 6px; overflow: hidden; }
+    .bar-fill { height: 100%; border-radius: 3px; }
+    .stat-row { display: flex; gap: 12px; align-items: center; margin-bottom: 8px; }
+    .stat-badge { border-radius: 4px; padding: 2px 8px; font-size: 12px; font-weight: 700; font-family: var(--font-head); min-width: 50px; text-align: center; }
+    .metric-pill { border-radius: 6px; padding: 12px 16px; font-family: var(--font-head); font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; transition: all .15s; text-align: center; }
+    .active-pill { font-weight: 700; }
+    .metric-item { background: var(--surface); border: 1px solid var(--lavender); border-radius: 8px; overflow: hidden; margin-bottom: 12px; }
+    .metric-hd { width: 100%; background: none; border: none; padding: 16px 20px; display: flex; align-items: center; gap: 16px; cursor: pointer; text-align: left; font-family: var(--font-body); }
+    .metric-badge { font-family: var(--font-head); font-size: 13px; font-weight: 700; border-radius: 4px; padding: 4px 10px; min-width: 80px; text-align: center; }
+    .metric-title { font-size: 13px; font-weight: 600; color: var(--violet); }
+    .metric-sub { font-size: 12px; color: var(--text-secondary); margin-top: 2px; }
+    .metric-toggle { color: var(--text-muted); font-size: 18px; margin-left: auto; }
+    .metric-body { display: none; padding: 0 20px 20px; }
+    .metric-item.open .metric-body { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+    @media(max-width:600px){ .metric-item.open .metric-body { grid-template-columns: 1fr; } }
+    .metric-detail { background: var(--bg); border: 1px solid var(--lavender); border-radius: 6px; padding: 12px 14px; }
+    .metric-dl { font-family: var(--font-head); font-size: 10px; color: var(--text-muted); letter-spacing: .08em; margin-bottom: 6px; }
+    .metric-dv { font-size: 12px; color: var(--text-secondary); line-height: 1.5; }
+    .footer { border-top: 1px solid var(--lavender); padding: 16px 40px; display: flex; justify-content: space-between; align-items: center; }
+    .footer span { color: var(--text-muted); font-size: 11px; font-family: var(--font-head); }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-inner">
+    <div class="header-top">
+      <div>
+        <div class="badge">AI PM Toolkit</div>
+        <h1>Evaluation Cheat Sheet</h1>
+        <p class="header-sub">From vibe-coding to evaluation-driven development — a decision toolkit for AI PMs</p>
+      </div>
+    </div>
+    <div class="tabs">
+      <button class="tab-btn active" onclick="switchTab(0)">Decision Flow</button>
+      <button class="tab-btn" onclick="switchTab(1)">Capability Map</button>
+      <button class="tab-btn" onclick="switchTab(2)">Evaluator Guide</button>
+      <button class="tab-btn" onclick="switchTab(3)">Golden Dataset</button>
+      <button class="tab-btn" onclick="switchTab(4)">Metrics</button>
+      <button class="tab-btn" onclick="switchTab(5)">Deployment Matrix</button>
+      <button class="tab-btn" onclick="switchTab(6)">Do's &amp; Don'ts</button>
+    </div>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- TAB 0: Decision Flow -->
+  <div class="panel active" id="panel-0">
+    <p class="intro-text">Work through these 5 decision gates before writing a single eval. Each gate has a default path — only deviate when you have a reason.</p>
+    <div class="steps">
+      <div class="step open" id="step-0">
+        <button class="step-header" onclick="toggleStep(0)">
+          <span class="step-num">01</span>
+          <div><div class="step-title">What are you evaluating?</div><div class="step-desc">Identify the failure mode category before picking any metric or tool.</div></div>
+          <span class="step-toggle" id="toggle-0">−</span>
+        </button>
+        <div class="step-body">
+          <div class="choices">
+            <div class="choice" style="border-color:#5818FF44 #5818FF44 #5818FF44 #5818FF"><div class="choice-label" style="color:#5818FF">Output quality</div><div class="choice-desc">Tone, formatting, hallucination, safety, instruction following</div></div>
+            <div class="choice" style="border-color:#0D7A5F44 #0D7A5F44 #0D7A5F44 #0D7A5F"><div class="choice-label" style="color:#0D7A5F">Retrieval / Ranking</div><div class="choice-desc">Context precision, recall, ranking quality</div></div>
+            <div class="choice" style="border-color:#B4530944 #B4530944 #B4530944 #B45309"><div class="choice-label" style="color:#B45309">Tool use / Agentic</div><div class="choice-desc">Tool calls, multi-step reasoning, task completion</div></div>
+            <div class="choice" style="border-color:#C0392B44 #C0392B44 #C0392B44 #C0392B"><div class="choice-label" style="color:#C0392B">Cost &amp; Latency</div><div class="choice-desc">Tokens I/O, TTFT, cost per query, error rate</div></div>
+          </div>
+          <div class="tip"><span class="tip-arrow">→</span><span class="tip-text">One eval = one failure mode. Never mix retrieval and generation metrics in the same eval run.</span></div>
+        </div>
+      </div>
+      <div class="step" id="step-1">
+        <button class="step-header" onclick="toggleStep(1)">
+          <span class="step-num">02</span>
+          <div><div class="step-title">What data do you have?</div><div class="step-desc">Your data reality determines your eval strategy — don't skip this.</div></div>
+          <span class="step-toggle" id="toggle-1">+</span>
+        </button>
+        <div class="step-body">
+          <div class="choices">
+            <div class="choice" style="border-color:#0D7A5F44 #0D7A5F44 #0D7A5F44 #0D7A5F"><div class="choice-label" style="color:#0D7A5F">Production logs available</div><div class="choice-desc">→ Sample 50–100 traces, annotate with domain experts, build golden set</div></div>
+            <div class="choice" style="border-color:#B4530944 #B4530944 #B4530944 #B45309"><div class="choice-label" style="color:#B45309">No production data yet</div><div class="choice-desc">→ Generate synthetic failure cases. Be specific: domain + failure type</div></div>
+            <div class="choice" style="border-color:#5818FF44 #5818FF44 #5818FF44 #5818FF"><div class="choice-label" style="color:#5818FF">Golden set exists</div><div class="choice-desc">→ Do train/test split if using few-shot prompting on LLM-as-a-Judge</div></div>
+          </div>
+          <div class="tip"><span class="tip-arrow">→</span><span class="tip-text">Start with 50–100 samples: 60% good, 20% bad, 20% edge cases. Synthetic is fine — but base it on real failure patterns.</span></div>
+        </div>
+      </div>
+      <div class="step" id="step-2">
+        <button class="step-header" onclick="toggleStep(2)">
+          <span class="step-num">03</span>
+          <div><div class="step-title">Do you need an LLM-as-a-Judge?</div><div class="step-desc">Default to code-based evaluation. Only escalate when necessary.</div></div>
+          <span class="step-toggle" id="toggle-2">+</span>
+        </button>
+        <div class="step-body">
+          <div class="choices">
+            <div class="choice" style="border-color:#0D7A5F44 #0D7A5F44 #0D7A5F44 #0D7A5F"><div class="choice-label" style="color:#0D7A5F">Use code-based first ✓ DEFAULT</div><div class="choice-desc">Exact match, regex, classifiers — for objective, deterministic failures. Fastest and most reliable.</div></div>
+            <div class="choice" style="border-color:#5818FF44 #5818FF44 #5818FF44 #5818FF"><div class="choice-label" style="color:#5818FF">Use LLM-as-a-Judge</div><div class="choice-desc">For subjective, nuanced criteria (tone, helpfulness, coherence). Requires human alignment validation first.</div></div>
+            <div class="choice" style="border-color:#B4530944 #B4530944 #B4530944 #B45309"><div class="choice-label" style="color:#B45309">Use human evaluators</div><div class="choice-desc">For high-stakes decisions, ambiguous edge cases, or calibrating your LLM-as-a-Judge rubric.</div></div>
+          </div>
+          <div class="tip"><span class="tip-arrow">→</span><span class="tip-text">LLM-as-a-Judge bias is real. Always validate TPR = TP/(TP+FN) and TNR = TN/(TN+FP) against human labels before trusting automated scores.</span></div>
+        </div>
+      </div>
+      <div class="step" id="step-3">
+        <button class="step-header" onclick="toggleStep(3)">
+          <span class="step-num">04</span>
+          <div><div class="step-title">What deployment context?</div><div class="step-desc">Match your evaluator setup to where it runs and what it protects.</div></div>
+          <span class="step-toggle" id="toggle-3">+</span>
+        </button>
+        <div class="step-body">
+          <div class="choices">
+            <div class="choice" style="border-color:#5818FF44 #5818FF44 #5818FF44 #5818FF"><div class="choice-label" style="color:#5818FF">Offline testing</div><div class="choice-desc">→ Experiment &amp; iterate. Use golden dataset. Tools: LangSmith, Langfuse, DeepEval</div></div>
+            <div class="choice" style="border-color:#0D7A5F44 #0D7A5F44 #0D7A5F44 #0D7A5F"><div class="choice-label" style="color:#0D7A5F">CI/CD gate</div><div class="choice-desc">→ Prevent regressions at deployment. Code-based + LLM-as-a-Judge. Run on every PR.</div></div>
+            <div class="choice" style="border-color:#B4530944 #B4530944 #B4530944 #B45309"><div class="choice-label" style="color:#B45309">Online monitoring</div><div class="choice-desc">→ Track live performance, collect traces. Tools: Arize, LangSmith, Langfuse</div></div>
+            <div class="choice" style="border-color:#C0392B44 #C0392B44 #C0392B44 #C0392B"><div class="choice-label" style="color:#C0392B">Real-time guardrails</div><div class="choice-desc">→ Block catastrophic failures in production. Tools: Guardrails AI, LiteLLM, Bedrock</div></div>
+          </div>
+          <div class="tip"><span class="tip-arrow">→</span><span class="tip-text">Eval is not one-time. Set up CI/CD gates early — even a basic golden set + threshold prevents shipping regressions.</span></div>
+        </div>
+      </div>
+      <div class="step" id="step-4">
+        <button class="step-header" onclick="toggleStep(4)">
+          <span class="step-num">05</span>
+          <div><div class="step-title">What metric fits?</div><div class="step-desc">Match metric to failure mode and data type. Never use a metric you can't explain to a stakeholder.</div></div>
+          <span class="step-toggle" id="toggle-4">+</span>
+        </button>
+        <div class="step-body">
+          <div class="choices">
+            <div class="choice" style="border-color:#0D7A5F44 #0D7A5F44 #0D7A5F44 #0D7A5F"><div class="choice-label" style="color:#0D7A5F">Start binary ✓ DEFAULT</div><div class="choice-desc">Pass/fail is always the right starting point. Refine to Likert only when binary isn't discriminating enough.</div></div>
+            <div class="choice" style="border-color:#5818FF44 #5818FF44 #5818FF44 #5818FF"><div class="choice-label" style="color:#5818FF">Set a threshold</div><div class="choice-desc">High-risk = high threshold. Define before running eval, not after seeing results.</div></div>
+            <div class="choice" style="border-color:#B4530944 #B4530944 #B4530944 #B45309"><div class="choice-label" style="color:#B45309">Watch Likert bias</div><div class="choice-desc">Scales (1–5) cause rater drift toward the middle. Use anchored rubrics with few-shot examples.</div></div>
+          </div>
+          <div class="tip"><span class="tip-arrow">→</span><span class="tip-text">Spot failures, not perfection. A score of 0.7 on a well-calibrated rubric tells you more than 0.95 on a vague one.</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 1: Capability Map -->
+  <div class="panel" id="panel-1">
+    <p class="intro-text">Match your AI feature to the right capability bucket — each has specific evaluators and metrics.</p>
+    <div class="card-grid">
+      <div class="cap-card" style="border-top-color:#5818FF">
+        <div class="cap-name" style="color:#5818FF">Output Quality</div>
+        <div><span class="tag">Hallucination</span><span class="tag">Tone &amp; Style</span><span class="tag">Formatting</span><span class="tag">Safety (PII, injection)</span></div>
+        <div class="cap-meta">
+          <div><div class="meta-label">Evaluators</div><div class="meta-val">LLM-as-a-Judge, Classifiers, Code-based, Human evaluator</div></div>
+          <div><div class="meta-label">Metric</div><div class="meta-val">Binary pass/fail, classifier score</div></div>
+          <div class="use-when" style="background:#5818FF15;border-color:#5818FF44;color:#5818FF">→ use when: All production AI applications, especially domain-heavy ones (policy, customer context, roleplay)</div>
+        </div>
+      </div>
+      <div class="cap-card" style="border-top-color:#0D7A5F">
+        <div class="cap-name" style="color:#0D7A5F">Retrieval</div>
+        <div><span class="tag">Context precision</span><span class="tag">Context recall</span><span class="tag">Ranking</span></div>
+        <div class="cap-meta">
+          <div><div class="meta-label">Evaluators</div><div class="meta-val">Code-based, LLM-as-a-Judge, Human evaluator</div></div>
+          <div><div class="meta-label">Metric</div><div class="meta-val">NDCG@K, MRR, Recall@K, Relevance Score</div></div>
+          <div class="use-when" style="background:#0D7A5F15;border-color:#0D7A5F44;color:#0D7A5F">→ use when: RAG pipeline or search component</div>
+        </div>
+      </div>
+      <div class="cap-card" style="border-top-color:#B45309">
+        <div class="cap-name" style="color:#B45309">Agentic / Tool Use</div>
+        <div><span class="tag">Tool calls</span><span class="tag">Instruction following</span><span class="tag">Multi-step reasoning</span></div>
+        <div class="cap-meta">
+          <div><div class="meta-label">Evaluators</div><div class="meta-val">Code-based, LLM-as-a-Judge, Human evaluator</div></div>
+          <div><div class="meta-label">Metric</div><div class="meta-val">Tool call accuracy, task completion rate, exact match</div></div>
+          <div class="use-when" style="background:#B4530915;border-color:#B4530944;color:#B45309">→ use when: Function-calling or multi-step agentic pipelines</div>
+        </div>
+      </div>
+      <div class="cap-card" style="border-top-color:#C0392B">
+        <div class="cap-name" style="color:#C0392B">Cost &amp; Latency</div>
+        <div><span class="tag">Tokens (I/O)</span><span class="tag">Cost per query</span><span class="tag">TTFT</span><span class="tag">Total time</span><span class="tag">Error rate</span></div>
+        <div class="cap-meta">
+          <div><div class="meta-label">Evaluators</div><div class="meta-val">Code-based, Monitoring platform</div></div>
+          <div><div class="meta-label">Metric</div><div class="meta-val">p50/p95 latency, $ per 1k queries</div></div>
+          <div class="use-when" style="background:#C0392B12;border-color:#C0392B44;color:#C0392B">→ use when: Pre-launch and continuous monitoring</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 2: Evaluator Guide -->
+  <div class="panel" id="panel-2">
+    <p class="intro-text">Choose your evaluator based on the nature of the failure mode. Default to code-based — only escalate when the criterion is genuinely subjective.</p>
+    <div class="card-grid-2">
+      <div>
+        <div class="section-label">Decision: Which evaluator?</div>
+        <div class="eval-card" style="border-left-color:#0D7A5F">
+          <div class="eval-top">
+            <span class="eval-name" style="color:#0D7A5F">Code-based</span>
+            <span class="default-badge" style="background:#0D7A5F15;border-color:#0D7A5F44;color:#0D7A5F">DEFAULT</span>
+          </div>
+          <div class="eval-row"><span style="color:#0D7A5F">→ use when:</span> Objective, deterministic, rule-based failures</div>
+          <div class="eval-row"><span style="color:#C0392B">→ avoid when:</span> Nuanced subjective criteria</div>
+          <div class="eval-row" style="color:var(--text-muted)">e.g. Exact match, JSON validation, regex, classifiers</div>
+        </div>
+        <div class="eval-card" style="border-left-color:#5818FF">
+          <div class="eval-top"><span class="eval-name" style="color:#5818FF">LLM-as-a-Judge</span></div>
+          <div class="eval-row"><span style="color:#0D7A5F">→ use when:</span> Subjective criteria: tone, helpfulness, coherence, safety</div>
+          <div class="eval-row"><span style="color:#C0392B">→ avoid when:</span> Human labels haven't been used to validate TPR/TNR first</div>
+          <div class="eval-row" style="color:var(--text-muted)">e.g. Relevance scoring, hallucination detection, style eval</div>
+        </div>
+        <div class="eval-card" style="border-left-color:#B45309">
+          <div class="eval-top"><span class="eval-name" style="color:#B45309">Human evaluator</span></div>
+          <div class="eval-row"><span style="color:#0D7A5F">→ use when:</span> High-stakes decisions, calibrating LLM-as-a-Judge rubric, edge cases</div>
+          <div class="eval-row"><span style="color:#C0392B">→ avoid when:</span> Scale — human eval is slow and expensive</div>
+          <div class="eval-row" style="color:var(--text-muted)">e.g. Rubric calibration, golden set creation, edge case triage</div>
+        </div>
+        <div style="margin-top:24px">
+          <div style="background:var(--indigo-soft);border:1px solid var(--indigo-mid);border-radius:6px;padding:12px 14px">
+            <div style="font-family:var(--font-head);font-size:11px;color:var(--indigo);font-weight:700;margin-bottom:6px">Calibrate the LLM-as-a-Judge before deploying at scale</div>
+            <div style="font-size:11px;color:var(--text-secondary);line-height:1.6;margin-bottom:10px">An LLM-as-a-Judge is an AI product in its own right — evaluate it before putting it to work. It needs its own golden dataset, separate from your AI product's.</div>
+            <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:14px">
+              <div style="display:flex;gap:8px;align-items:flex-start;font-size:11px;color:var(--text-secondary)"><span style="color:var(--indigo);font-weight:700">→</span>Collect human annotations on the judge's decisions, not the AI output's quality</div>
+              <div style="display:flex;gap:8px;align-items:flex-start;font-size:11px;color:var(--text-secondary)"><span style="color:var(--indigo);font-weight:700">→</span>Curate for edge cases, ambiguous outputs, and annotator disagreements</div>
+              <div style="display:flex;gap:8px;align-items:flex-start;font-size:11px;color:var(--text-secondary)"><span style="color:var(--indigo);font-weight:700">→</span>Use it to measure TPR/TNR and iterate on the rubric before the judge goes live</div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+              <div style="background:var(--surface);border:1px solid var(--lavender);border-radius:6px;padding:12px 14px">
+                <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--indigo);margin-bottom:6px">TPR = TP / (TP + FN)</div>
+                <div style="font-size:11px;color:var(--text-secondary);line-height:1.5">Does the judge catch real failures? Low TPR = misses real issues.</div>
+              </div>
+              <div style="background:var(--surface);border:1px solid var(--lavender);border-radius:6px;padding:12px 14px">
+                <div style="font-family:var(--font-head);font-size:12px;font-weight:700;color:var(--indigo);margin-bottom:6px">TNR = TN / (TN + FP)</div>
+                <div style="font-size:11px;color:var(--text-secondary);line-height:1.5">Does the judge avoid false alarms? Low TNR = over-triggers on good outputs.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="section-label">LLM-as-a-Judge Prompt Template</div>
+        <div class="prompt-box">
+          <div class="prompt-hd">PROMPT STRUCTURE: Role → Context → Task → Rubric → Score</div>
+          <div class="prompt-body">Role: You are an expert evaluator assessing whether the retrieved context is relevant to answer a user's question. Your task is to evaluate how directly and completely the context supports a response to the question.
+
+Context:
+You will be given:
+1. A user's question
+2. A retrieved context passage
+
+Task:
+First, review the user's question: {USER_QUESTION}
+Now review the retrieved context: {RETRIEVED_CONTEXT}
+Evaluate the context for RELEVANCE:
+- Does the context contain information that directly addresses the question?
+- Is the key information present, or only tangentially related content?
+- Could an accurate answer be grounded in this context alone?
+- Is there missing information that would require additional context?
+
+Then assign a relevance score between 0 and 1:
+- 0 = Context is completely unrelated to the question
+- 0.5 = Context is partially relevant but missing key information to answer fully
+- 1 = Context fully supports an accurate and complete answer
+
+Return your evaluation in &lt;score&gt;[0–1]&lt;/score&gt;</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 3: Golden Dataset -->
+  <div class="panel" id="panel-3">
+    <p class="intro-text">Your golden dataset is the single source of truth for your eval. Build it carefully — it directly determines what your evaluator can and cannot detect.</p>
+    <div class="card-grid-2">
+      <div>
+        <div class="section-label">Golden Dataset Rules</div>
+        <div class="rule-item" style="border-left-color:#0D7A5F;border-color:#0D7A5F22"><span class="rule-icon" style="color:#0D7A5F">✓</span><span class="rule-text">Define good and bad with domain experts</span></div>
+        <div class="rule-item" style="border-left-color:#0D7A5F;border-color:#0D7A5F22"><span class="rule-icon" style="color:#0D7A5F">✓</span><span class="rule-text">Start with 50–100 production samples, annotated by humans</span></div>
+        <div class="rule-item" style="border-left-color:#0D7A5F;border-color:#0D7A5F22"><span class="rule-icon" style="color:#0D7A5F">✓</span><span class="rule-text">Mix: 60% good, 20% bad, 20% edge cases</span></div>
+        <div class="rule-item" style="border-left-color:#0D7A5F;border-color:#0D7A5F22"><span class="rule-icon" style="color:#0D7A5F">✓</span><span class="rule-text">Slice into subsets: by cohort, source, topic</span></div>
+        <div class="rule-item" style="border-left-color:#0D7A5F;border-color:#0D7A5F22"><span class="rule-icon" style="color:#0D7A5F">✓</span><span class="rule-text">Synthetic is OK — but base on real failure cases, avoid generic/repetitive</span></div>
+        <div class="rule-item" style="border-left-color:#0D7A5F;border-color:#0D7A5F22"><span class="rule-icon" style="color:#0D7A5F">✓</span><span class="rule-text">If using few-shot prompting, do train/test split</span></div>
+        <div class="rule-item" style="border-left-color:#C0392B;border-color:#C0392B22"><span class="rule-icon" style="color:#C0392B">✗</span><span class="rule-text">Don't annotate after seeing the score — annotate blind</span></div>
+        <div class="rule-item" style="border-left-color:#C0392B;border-color:#C0392B22"><span class="rule-icon" style="color:#C0392B">✗</span><span class="rule-text">Don't use generic samples disconnected from your domain</span></div>
+        <div class="rule-item" style="border-left-color:#C0392B;border-color:#C0392B22"><span class="rule-icon" style="color:#C0392B">✗</span><span class="rule-text">Don't skip re-annotation when pipeline changes significantly</span></div>
+      </div>
+      <div>
+        <div class="section-label">Composition Target</div>
+        <div style="background:var(--surface);border:1px solid var(--lavender);border-radius:8px;padding:20px;margin-bottom:16px">
+          <div class="bar-row">
+            <div class="bar-label"><span class="bar-name">Good examples</span><span class="bar-pct" style="color:#0D7A5F">60%</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:60%;background:#0D7A5F"></div></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label"><span class="bar-name">Bad / failing examples</span><span class="bar-pct" style="color:#C0392B">20%</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:20%;background:#C0392B"></div></div>
+          </div>
+          <div class="bar-row">
+            <div class="bar-label"><span class="bar-name">Edge cases</span><span class="bar-pct" style="color:#B45309">20%</span></div>
+            <div class="bar-track"><div class="bar-fill" style="width:20%;background:#B45309"></div></div>
+          </div>
+          <div style="border-top:1px solid var(--lavender);padding-top:14px;margin-top:6px">
+            <div class="meta-label" style="margin-bottom:10px">Minimum viable size</div>
+            <div class="stat-row"><span class="stat-badge" style="background:#0D7A5F15;color:#0D7A5F;border:1px solid #0D7A5F33">50–100</span><span style="font-size:12px;color:var(--text-secondary)">Production samples annotated by humans</span></div>
+            <div class="stat-row"><span class="stat-badge" style="background:#5818FF15;color:#5818FF;border:1px solid #5818FF33">1</span><span style="font-size:12px;color:var(--text-secondary)">Failure mode per evaluator</span></div>
+            <div class="stat-row"><span class="stat-badge" style="background:#B4530915;color:#B45309;border:1px solid #B4530933">1</span><span style="font-size:12px;color:var(--text-secondary)">Evaluator per failure mode</span></div>
+          </div>
+        </div>
+        <div style="background:var(--indigo-soft);border:1px solid var(--indigo-mid);border-radius:6px;padding:12px 14px">
+          <div style="font-family:var(--font-head);font-size:11px;color:var(--indigo);font-weight:700;margin-bottom:6px">Spot failures, not perfection</div>
+          <div style="font-size:11px;color:var(--text-secondary);line-height:1.6">Don't expect perfect scores. Eval exists to surface failure patterns — not achieve 100%. A well-calibrated 0.70 beats an inflated 0.95.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 4: Metrics -->
+  <div class="panel" id="panel-4">
+    <p class="intro-text">Pick based on your failure mode — not what's popular. Click a category to explore its metrics.</p>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:24px">
+      <button onclick="filterMetrics('output')" id="pill-output" class="metric-pill active-pill" style="background:#5818FF15;border:1px solid #5818FF44;color:#5818FF;opacity:1">Output Quality</button>
+      <button onclick="filterMetrics('retrieval')" id="pill-retrieval" class="metric-pill" style="background:#0D7A5F15;border:1px solid #0D7A5F44;color:#0D7A5F;opacity:0.5">Retrieval</button>
+      <button onclick="filterMetrics('agentic')" id="pill-agentic" class="metric-pill" style="background:#B4530915;border:1px solid #B4530944;color:#B45309;opacity:0.5">Agentic / Tool Use</button>
+      <button onclick="filterMetrics('cost')" id="pill-cost" class="metric-pill" style="background:#C0392B12;border:1px solid #C0392B44;color:#C0392B;opacity:0.5">Cost &amp; Latency</button>
+    </div>
+    <div class="metric-group" id="group-output">
+      <div class="metric-item open" id="metric-0">
+        <button class="metric-hd" onclick="toggleMetric(0)">
+          <span class="metric-badge" style="background:#5818FF15;color:#5818FF">Pass / Fail</span>
+          <div><div class="metric-title">Binary Pass / Fail</div><div class="metric-sub">Does the output meet the acceptance criterion — yes or no?</div></div>
+          <span class="metric-toggle" id="mtoggle-0">−</span>
+        </button>
+        <div class="metric-body" id="mbody-0" style="display:grid">
+          <div class="metric-detail"><div class="metric-dl">Range</div><div class="metric-dv">0 (fail) or 1 (pass)</div></div>
+          <div class="metric-detail"><div class="metric-dl">When failing → fix</div><div class="metric-dv" style="color:#C0392B">Define clearer acceptance criteria. If too many edge cases, move to Likert.</div></div>
+          <div class="metric-detail"><div class="metric-dl">Use when</div><div class="metric-dv" style="color:#0D7A5F">Always start here. Format, safety, instruction following, any deterministic check.</div></div>
+        </div>
+      </div>
+      <div class="metric-item" id="metric-1">
+        <button class="metric-hd" onclick="toggleMetric(1)">
+          <span class="metric-badge" style="background:#5818FF15;color:#5818FF">Likert Score</span>
+          <div><div class="metric-title">Likert / Rubric Score</div><div class="metric-sub">Graded quality score on a defined scale (e.g. 1–3 or 0–1).</div></div>
+          <span class="metric-toggle" id="mtoggle-1">+</span>
+        </button>
+        <div class="metric-body" id="mbody-1">
+          <div class="metric-detail"><div class="metric-dl">Range</div><div class="metric-dv">Defined by rubric — typically 1–3, 1–5, or 0–1 float</div></div>
+          <div class="metric-detail"><div class="metric-dl">When low → fix</div><div class="metric-dv" style="color:#C0392B">Middle-ground bias is common. Add anchored few-shot examples to rubric extremes.</div></div>
+          <div class="metric-detail"><div class="metric-dl">Use when</div><div class="metric-dv" style="color:#0D7A5F">Tone, helpfulness, coherence — any subjective criterion where binary is too blunt.</div></div>
+        </div>
+      </div>
+      <div class="metric-item" id="metric-2">
+        <button class="metric-hd" onclick="toggleMetric(2)">
+          <span class="metric-badge" style="background:#5818FF15;color:#5818FF">Hallucination</span>
+          <div><div class="metric-title">Hallucination Rate</div><div class="metric-sub">% of outputs containing factually incorrect or fabricated claims.</div></div>
+          <span class="metric-toggle" id="mtoggle-2">+</span>
+        </button>
+        <div class="metric-body" id="mbody-2">
+          <div class="metric-detail"><div class="metric-dl">Range</div><div class="metric-dv">0% (none) → 100% (always hallucinates)</div></div>
+          <div class="metric-detail"><div class="metric-dl">When high → fix</div><div class="metric-dv" style="color:#C0392B">Add grounding context, tighten system prompt, use RAG, or add a factuality judge.</div></div>
+          <div class="metric-detail"><div class="metric-dl">Use when</div><div class="metric-dv" style="color:#0D7A5F">Any factual, knowledge-intensive, or domain-specific application.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="metric-group" id="group-retrieval" style="display:none">
+      <div class="metric-item" id="metric-3">
+        <button class="metric-hd" onclick="toggleMetric(3)">
+          <span class="metric-badge" style="background:#0D7A5F15;color:#0D7A5F">Recall@K</span>
+          <div><div class="metric-title">Recall at K</div><div class="metric-sub">Of all relevant items, how many did you retrieve in top K?</div></div>
+          <span class="metric-toggle" id="mtoggle-3">+</span>
+        </button>
+        <div class="metric-body" id="mbody-3">
+          <div class="metric-detail"><div class="metric-dl">Range</div><div class="metric-dv">0.0 → 1.0 (0.85 = found 85% of relevant in top K)</div></div>
+          <div class="metric-detail"><div class="metric-dl">When low → fix</div><div class="metric-dv" style="color:#C0392B">Retrieval is the problem. Fix BM25, increase top_k, or improve embeddings.</div></div>
+          <div class="metric-detail"><div class="metric-dl">Use when</div><div class="metric-dv" style="color:#0D7A5F">First metric to check in any RAG pipeline — fix retrieval before fixing ranking.</div></div>
+        </div>
+      </div>
+      <div class="metric-item" id="metric-4">
+        <button class="metric-hd" onclick="toggleMetric(4)">
+          <span class="metric-badge" style="background:#0D7A5F15;color:#0D7A5F">NDCG@K</span>
+          <div><div class="metric-title">Normalized Discounted Cumulative Gain</div><div class="metric-sub">Ranking quality — are the most relevant results near the top?</div></div>
+          <span class="metric-toggle" id="mtoggle-4">+</span>
+        </button>
+        <div class="metric-body" id="mbody-4">
+          <div class="metric-detail"><div class="metric-dl">Range</div><div class="metric-dv">0.0 → 1.0 (1.0 = perfect ranking)</div></div>
+          <div class="metric-detail"><div class="metric-dl">When low → fix</div><div class="metric-dv" style="color:#C0392B">Retrieving relevant items but burying them. Add a reranking layer.</div></div>
+          <div class="metric-detail"><div class="metric-dl">Use when</div><div class="metric-dv" style="color:#0D7A5F">RAG or search pipelines where rank order matters.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="metric-group" id="group-agentic" style="display:none">
+      <div class="metric-item" id="metric-5">
+        <button class="metric-hd" onclick="toggleMetric(5)">
+          <span class="metric-badge" style="background:#B4530915;color:#B45309">Tool Accuracy</span>
+          <div><div class="metric-title">Tool Call Accuracy</div><div class="metric-sub">Did the agent call the right tool with the right arguments?</div></div>
+          <span class="metric-toggle" id="mtoggle-5">+</span>
+        </button>
+        <div class="metric-body" id="mbody-5">
+          <div class="metric-detail"><div class="metric-dl">Range</div><div class="metric-dv">Binary per call · aggregate as % accuracy across test set</div></div>
+          <div class="metric-detail"><div class="metric-dl">When low → fix</div><div class="metric-dv" style="color:#C0392B">Improve tool descriptions, add few-shot examples, or decompose the task.</div></div>
+          <div class="metric-detail"><div class="metric-dl">Use when</div><div class="metric-dv" style="color:#0D7A5F">Any function-calling or agentic pipeline. Validate tool name + args separately.</div></div>
+        </div>
+      </div>
+      <div class="metric-item" id="metric-6">
+        <button class="metric-hd" onclick="toggleMetric(6)">
+          <span class="metric-badge" style="background:#B4530915;color:#B45309">Task Completion</span>
+          <div><div class="metric-title">Task Completion Rate</div><div class="metric-sub">Did the agent successfully complete the end-to-end task?</div></div>
+          <span class="metric-toggle" id="mtoggle-6">+</span>
+        </button>
+        <div class="metric-body" id="mbody-6">
+          <div class="metric-detail"><div class="metric-dl">Range</div><div class="metric-dv">0% → 100% across task set</div></div>
+          <div class="metric-detail"><div class="metric-dl">When low → fix</div><div class="metric-dv" style="color:#C0392B">Break task into sub-steps and measure each. Identify where in the chain it fails.</div></div>
+          <div class="metric-detail"><div class="metric-dl">Use when</div><div class="metric-dv" style="color:#0D7A5F">Multi-step agentic workflows where intermediate steps matter.</div></div>
+        </div>
+      </div>
+    </div>
+    <div class="metric-group" id="group-cost" style="display:none">
+      <div class="metric-item" id="metric-7">
+        <button class="metric-hd" onclick="toggleMetric(7)">
+          <span class="metric-badge" style="background:#C0392B12;color:#C0392B">Latency</span>
+          <div><div class="metric-title">Latency (TTFT / Total time)</div><div class="metric-sub">Time to first token and end-to-end response time.</div></div>
+          <span class="metric-toggle" id="mtoggle-7">+</span>
+        </button>
+        <div class="metric-body" id="mbody-7">
+          <div class="metric-detail"><div class="metric-dl">Range</div><div class="metric-dv">Measure p50 and p95 — p95 reveals tail latency issues</div></div>
+          <div class="metric-detail"><div class="metric-dl">When high → fix</div><div class="metric-dv" style="color:#C0392B">Reduce context length, cache repeated prompts, use smaller models for simple tasks.</div></div>
+          <div class="metric-detail"><div class="metric-dl">Use when</div><div class="metric-dv" style="color:#0D7A5F">Any user-facing feature. Set SLA thresholds before launch.</div></div>
+        </div>
+      </div>
+      <div class="metric-item" id="metric-8">
+        <button class="metric-hd" onclick="toggleMetric(8)">
+          <span class="metric-badge" style="background:#C0392B12;color:#C0392B">Cost / Query</span>
+          <div><div class="metric-title">Cost per Query</div><div class="metric-sub">Token cost (input + output) per request, at scale.</div></div>
+          <span class="metric-toggle" id="mtoggle-8">+</span>
+        </button>
+        <div class="metric-body" id="mbody-8">
+          <div class="metric-detail"><div class="metric-dl">Range</div><div class="metric-dv">$ per 1k queries — project from avg tokens × model pricing</div></div>
+          <div class="metric-detail"><div class="metric-dl">When high → fix</div><div class="metric-dv" style="color:#C0392B">Trim system prompt, reduce retrieved chunks, use prompt caching, downgrade model tier.</div></div>
+          <div class="metric-detail"><div class="metric-dl">Use when</div><div class="metric-dv" style="color:#0D7A5F">Pre-launch and continuous monitoring. Never optimize cost alone — always track alongside quality.</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 5: Deployment Matrix -->
+  <div class="panel" id="panel-5">
+    <p class="intro-text">Each deployment context has a different goal, evaluator mix, and data source. Most mature pipelines run all four.</p>
+    <div class="card-grid">
+      <div class="deploy-card">
+        <div class="deploy-hd" style="background:#B4530915;border-color:#B4530933">
+          <div class="deploy-name" style="color:#B45309">Online Monitoring</div>
+          <div class="deploy-goal">Track live performance, collect traces, manage incidents</div>
+        </div>
+        <div class="deploy-body">
+          <div><div class="meta-label">Evaluators</div><div><span class="pill">LLM-as-a-Judge</span><span class="pill">Code-based</span></div></div>
+          <div><div class="meta-label">Data</div><span class="pill" style="background:#B4530915;border-color:#B4530933;color:#B45309">Live production</span></div>
+          <div><div class="meta-label">Tools</div><div class="meta-val">LangSmith, Langfuse, Arize</div></div>
+        </div>
+      </div>
+      <div class="deploy-card">
+        <div class="deploy-hd" style="background:#5818FF15;border-color:#5818FF33">
+          <div class="deploy-name" style="color:#5818FF">Offline Testing</div>
+          <div class="deploy-goal">Experiment, iterate, validate hypotheses before shipping</div>
+        </div>
+        <div class="deploy-body">
+          <div><div class="meta-label">Evaluators</div><div><span class="pill">LLM-as-a-Judge</span><span class="pill">Code-based</span><span class="pill">Human-in-the-loop</span></div></div>
+          <div><div class="meta-label">Data</div><span class="pill" style="background:#5818FF15;border-color:#5818FF33;color:#5818FF">Golden dataset</span></div>
+          <div><div class="meta-label">Tools</div><div class="meta-val">LangSmith, Langfuse, DeepEval, OpenAI Evals</div></div>
+        </div>
+      </div>
+      <div class="deploy-card">
+        <div class="deploy-hd" style="background:#C0392B12;border-color:#C0392B33">
+          <div class="deploy-name" style="color:#C0392B">Guardrails</div>
+          <div class="deploy-goal">Protect system and user from catastrophic failures in real-time</div>
+        </div>
+        <div class="deploy-body">
+          <div><div class="meta-label">Evaluators</div><div><span class="pill">Code-based</span><span class="pill">Classifiers</span><span class="pill">LLM-guardian</span><span class="pill">Built-in judge</span></div></div>
+          <div><div class="meta-label">Data</div><span class="pill" style="background:#C0392B12;border-color:#C0392B33;color:#C0392B">Live production</span></div>
+          <div><div class="meta-label">Tools</div><div class="meta-val">Guardrails AI, LiteLLM guardrails, Bedrock, Vertex AI safety filters</div></div>
+        </div>
+      </div>
+      <div class="deploy-card">
+        <div class="deploy-hd" style="background:#0D7A5F15;border-color:#0D7A5F33">
+          <div class="deploy-name" style="color:#0D7A5F">CI/CD</div>
+          <div class="deploy-goal">Test at deployment, prevent regressions on every PR</div>
+        </div>
+        <div class="deploy-body">
+          <div><div class="meta-label">Evaluators</div><div><span class="pill">LLM-as-a-Judge</span><span class="pill">Code-based</span></div></div>
+          <div><div class="meta-label">Data</div><span class="pill" style="background:#0D7A5F15;border-color:#0D7A5F33;color:#0D7A5F">Golden dataset</span></div>
+          <div><div class="meta-label">Tools</div><div class="meta-val">Your CI/CD platform, LangSmith, DeepEval</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TAB 6: Do's & Don'ts -->
+  <div class="panel" id="panel-6">
+    <p class="intro-text">Common pitfalls and principles that apply across all evaluation contexts.</p>
+    <div class="dnd-grid">
+      <div class="dnd-row"><div class="dnd-do"><span class="dnd-icon" style="color:#0D7A5F">✓</span><span>Establish eval before development</span></div><div class="dnd-dont"><span class="dnd-icon" style="color:#C0392B">✗</span><span>Wait until after development to think about eval</span></div></div>
+      <div class="dnd-row"><div class="dnd-do"><span class="dnd-icon" style="color:#0D7A5F">✓</span><span>Build failure test cases if no production data</span></div><div class="dnd-dont"><span class="dnd-icon" style="color:#C0392B">✗</span><span>Use vague, generic criteria</span></div></div>
+      <div class="dnd-row"><div class="dnd-do"><span class="dnd-icon" style="color:#0D7A5F">✓</span><span>Be specific: domain + failure mode + metric</span></div><div class="dnd-dont"><span class="dnd-icon" style="color:#C0392B">✗</span><span>Over-rely on off-the-shelf evals</span></div></div>
+      <div class="dnd-row"><div class="dnd-do"><span class="dnd-icon" style="color:#0D7A5F">✓</span><span>Use stronger models to judge weaker ones</span></div><div class="dnd-dont"><span class="dnd-icon" style="color:#C0392B">✗</span><span>Ignore biases in judge models</span></div></div>
+      <div class="dnd-row"><div class="dnd-do"><span class="dnd-icon" style="color:#0D7A5F">✓</span><span>Start with binary metrics, then refine</span></div><div class="dnd-dont"><span class="dnd-icon" style="color:#C0392B">✗</span><span>Skip human alignment validation for the LLM-as-a-Judge</span></div></div>
+      <div class="dnd-row"><div class="dnd-do"><span class="dnd-icon" style="color:#0D7A5F">✓</span><span>Iterate on rubric clarity with few-shot examples</span></div><div class="dnd-dont"><span class="dnd-icon" style="color:#C0392B">✗</span><span>Expect perfect scores — eval spots failures</span></div></div>
+      <div class="dnd-row"><div class="dnd-do"><span class="dnd-icon" style="color:#0D7A5F">✓</span><span>Mind empty outputs in results</span></div><div class="dnd-dont"><span class="dnd-icon" style="color:#C0392B">✗</span><span>Use one evaluator for multiple failure modes</span></div></div>
+    </div>
+  </div>
+
+</div>
+
+<div class="footer">
+  <span>AI PM's Evaluation Cheat Sheet</span>
+  <span>👨‍🍳 Chen Ming Coudamy</span>
+</div>
+
+<script>
+  function switchTab(i) {
+    document.querySelectorAll('.panel').forEach((p,j) => p.classList.toggle('active', i===j));
+    document.querySelectorAll('.tab-btn').forEach((b,j) => b.classList.toggle('active', i===j));
+  }
+  function toggleStep(i) {
+    const step = document.getElementById('step-'+i);
+    const toggle = document.getElementById('toggle-'+i);
+    const isOpen = step.classList.contains('open');
+    step.classList.toggle('open', !isOpen);
+    toggle.textContent = isOpen ? '+' : '−';
+  }
+  function toggleMetric(i) {
+    const item = document.getElementById('metric-'+i);
+    const body = document.getElementById('mbody-'+i);
+    const toggle = document.getElementById('mtoggle-'+i);
+    const isOpen = item.classList.contains('open');
+    item.classList.toggle('open', !isOpen);
+    body.style.display = isOpen ? 'none' : 'grid';
+    toggle.textContent = isOpen ? '+' : '−';
+  }
+  const pillColors = {
+    output:    { bg: '#5818FF15', border: '#5818FF44', color: '#5818FF' },
+    retrieval: { bg: '#0D7A5F15', border: '#0D7A5F44', color: '#0D7A5F' },
+    agentic:   { bg: '#B4530915', border: '#B4530944', color: '#B45309' },
+    cost:      { bg: '#C0392B12', border: '#C0392B44', color: '#C0392B' },
+  };
+  function filterMetrics(cat) {
+    ['output','retrieval','agentic','cost'].forEach(c => {
+      const group = document.getElementById('group-'+c);
+      const pill  = document.getElementById('pill-'+c);
+      const col   = pillColors[c];
+      if (c === cat) {
+        group.style.display = 'block';
+        pill.style.background = col.bg;
+        pill.style.borderColor = col.border;
+        pill.style.color = col.color;
+        pill.style.opacity = '1';
+        pill.classList.add('active-pill');
+      } else {
+        group.style.display = 'none';
+        pill.style.background = col.bg;
+        pill.style.borderColor = col.border;
+        pill.style.color = col.color;
+        pill.style.opacity = '0.5';
+        pill.classList.remove('active-pill');
+      }
+    });
+  }
+</script>
+</body>
+</html>
